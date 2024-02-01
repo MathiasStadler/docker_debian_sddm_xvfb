@@ -27,6 +27,11 @@ launch_xvfb() {
     done
 }
 
+
+run_startxfce4(){
+    
+}
+
 launch_window_manager() {
 #    local timeout=${XVFB_TIMEOUT:-5}
 
@@ -99,6 +104,7 @@ launch_google_chrome() {
 }
 
 launch_xvfb
-launch_window_manager
+# launch_window_manager
+run_startxfce4
 run_vnc_server
-launch_google_chrome
+# launch_google_chrome

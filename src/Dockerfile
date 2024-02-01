@@ -40,6 +40,7 @@ RUN apt-get update && \
     xfce4 \
     xfce4-terminal \
     x11vnc \
+    x11-utils \
     blackbird-gtk-theme \
     tango-icon-theme \
     dbus \                   
@@ -66,3 +67,18 @@ ENTRYPOINT ["/opt/docker-dbus-entrypoint.sh"]
 
 # run docker
 # docker run -it -v /tmp/.X11-unix:/tmp/.X11-unix -v /sys/fs/cgroup:/sys/fs/cgroup:ro --cap-add SYS_ADMIN --security-opt apparmor=unconfined --tmpfs /run --device /dev/snd --device /dev/dri -v /dev/shm:/dev/shm docker_debian_sddm_xvfb journalctl -f
+
+
+#ps wwwwaux
+
+# open a x-windows
+# x-terminal-emulator -T Bash -e /bin/bash --login
+
+# apt install xdg-desktop-portal-kde
+
+# DEBIAN_FRONTEND=nointeractive
+
+# debconf: (Can't locate Debconf/FrontEnd/Nointeractive.pm in @INC (you may need to install the Debconf::FrontEnd::Nointeractive module)
+
+#hier weiter sddm
+# docker run -it -v /tmp/.X11-unix:/tmp/.X11-unix -v /sys/fs/cgroup:/sys/fs/cgroup:ro --cap-add SYS_ADMIN --security-opt apparmor=unconfined --tmpfs /run --device /dev/snd --device /dev/dri  -v /dev/shm:/dev/shm docker_debian_sddm_xvfb bash
