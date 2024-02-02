@@ -24,6 +24,16 @@ EOF
 quoted_args="$(printf " %q" "${@}")"
 echo "${quoted_args}" >/etc/docker-entrypoint-cmd
 
+# rust for user 
+cat  >>/home/user/.bashrc <<- "END_SCRIPT"
+# path for rust
+ if [ -f /etc/docker-entrypoint-env ]; then
+ . /etc/docker-entrypoint-env
+ fi
+
+END_SCRIPT
+
+
 cat >/etc/systemd/system/docker-entrypoint.service <<EOF
 [Unit]
 Description=docker-entrypoint.service
