@@ -26,10 +26,13 @@ echo "${quoted_args}" >/etc/docker-entrypoint-cmd
 
 # rust for user 
 cat  >>/home/user/.bashrc <<- "END_SCRIPT"
+
+#
 # path for rust
- if [ -f /etc/docker-entrypoint-env ]; then
- . /etc/docker-entrypoint-env
- fi
+#
+if [ -f /etc/docker-entrypoint-env ]; then
+	. /etc/docker-entrypoint-env
+fi
 
 END_SCRIPT
 
