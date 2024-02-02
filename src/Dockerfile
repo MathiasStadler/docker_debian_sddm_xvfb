@@ -55,13 +55,43 @@ RUN apt-get update && \
     dbus-x11 \
     libdbus-1-3 \
     fluxbox \
+    curl \
     wget \
     libssl-dev \
     sudo \
     vim \
     fonts-liberation \
     upower \
-    eterm
+    eterm \
+    gnupg \
+    libasound2 \          
+    libatk1.0-0 \           
+    libatk-bridge2.0-0 \
+    libatspi2.0-0 \
+    libc6-dev \     
+    libcanberra-gtk-module  \
+    libcups2 \       
+    libdrm2 \                    
+    libgbm1 \     
+    libgl1-mesa-dri \
+    libgtk-3-0 \ 
+    libnspr4 \   
+    libnss3 \            
+    libpango1.0-0 \ 
+    libpulse0 \   
+    libu2f-udev \
+    libv4l-0 \         
+    libvulkan1 \   
+    libwayland-client0 \
+    libxcomposite1 \
+    libxdamage-dev \
+    unzip \
+    pulseaudio \
+    pulseaudio-utils \
+    pulsemixer \
+    pkg-config\
+    libssl-dev\
+    x11-utils
 
 
 
@@ -91,12 +121,31 @@ RUN set -eux; \
     rustup --version; \
     cargo --version; \
     rustc --version; \
-    apt-get remove -y --auto-remove \
-    wget \
-    ; \
     rm -rf ls   
 
 RUN rustup update stable
+
+# install google-chrome-stable latest version
+# FROM HERE
+# https://gist.github.com/varyonic/dea40abcf3dd891d204ef235c6e8dd79?permalink_comment_id=3976763
+# Set up the Chrome PPA
+RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -
+RUN echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list
+
+# Update the package list and install chrome
+RUN apt-get update -y
+RUN apt-get install --no-install-recommends --no-install-suggests -yqq google-chrome-stable
+
+
+ENV CHROMEDRIVER_DIR /chromedriver
+RUN CHROME_VERSION=$(google-chrome --product-version | cut -d '.' -f 1-3) && \
+DRIVER_VERSION=$(curl -s "https://googlechromelabs.github.io/chrome-for-testing/LATEST_RELEASE_$CHROME_VERSION") && \
+wget -q --continue -P $CHROMEDRIVER_DIR "https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/$DRIVER_VERSION/linux64/chromedriver-linux64.zip"
+
+RUN unzip $CHROMEDRIVER_DIR/chromedriver* -d $CHROMEDRIVER_DIR
+
+# Put Chromedriver into the PATH
+ENV PATH $CHROMEDRIVER_DIR:$PATH
 
 # clean up
 RUN apt-get autoremove -y --auto-remove  && \
@@ -106,7 +155,8 @@ RUN apt-get autoremove -y --auto-remove  && \
 
 COPY bootstrap.sh dbus/docker-dbus-entrypoint.sh  opt/
 
-
+# copy start-chrome.sh
+COPY start-chrome.sh /home/${USER}
 
 RUN chmod +x /opt/docker-dbus-entrypoint.sh
 ENTRYPOINT ["/opt/docker-dbus-entrypoint.sh"] 
