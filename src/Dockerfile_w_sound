@@ -4,40 +4,6 @@ FROM debian:12.4-slim
 ENV DEBIAN_FRONTEND noninteractive
 ENV LANG en_US.UTF-8 
 
-# RUN apt update && apt upgrade
-RUN apt update 
-
-# build these images 
-# cd src/
-# docker buildx build --progress=plain --tag docker_debian_sddm_xvfb --file Dockerfile "."
-
-
-
-# new user
-ENV PUID='1000' \
-    PGID='1000' \
-    USER='user' 
-
-RUN groupadd --gid "$PGID" "$USER" && \
-    useradd --home-dir /home/$USER --shell /bin/bash --uid "$PUID" --gid "$PGID" "$USER" && \
-    mkdir /home/$USER && \
-    chown -R $USER:$USER /home/$USER && \
-    usermod -aG sudo "$USER" && \
-    usermod -aG adm "$USER" && \
-    cp /etc/skel/.bashrc /home/user/
-
-# add $USER to sudoers
-RUN mkdir -p /etc/sudoers.d && \
-    echo "user ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/"${USER}"  && \
-    chmod 0440 /etc/sudoers.d/"$USER" && \
-    cp /etc/skel/.bashrc /home/${USER}
-
-
-# remove empty space
-# :g/^ /norm dw
-# sort
-# cat /tmp/t.txt |sort
-
 # insert in final version
 # apt-get full-upgrade && \
 RUN apt-get update && \
@@ -102,6 +68,52 @@ RUN apt-get update && \
     apulse \
     perl \
     locales
+
+
+# FROM HERE
+# https://stackoverflow.com/questions/56757169/is-there-a-way-to-suppress-update-alternatives-warning-skip-creation-warning
+
+RUN sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen && \
+    dpkg-reconfigure locales && \
+    update-locale LANG=en_US.UTF-8
+
+
+
+# RUN apt update && apt upgrade
+RUN apt update 
+
+# build these images 
+# cd src/
+# docker buildx build --progress=plain --tag docker_debian_sddm_xvfb --file Dockerfile "."
+
+
+
+# new user
+ENV PUID='1000' \
+    PGID='1000' \
+    USER='user' 
+
+RUN groupadd --gid "$PGID" "$USER" && \
+    useradd --home-dir /home/$USER --shell /bin/bash --uid "$PUID" --gid "$PGID" "$USER" && \
+    mkdir /home/$USER && \
+    chown -R $USER:$USER /home/$USER && \
+    usermod -aG sudo "$USER" && \
+    usermod -aG adm "$USER" && \
+    cp /etc/skel/.bashrc /home/user/
+
+# add $USER to sudoers
+RUN mkdir -p /etc/sudoers.d && \
+    echo "user ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/"${USER}"  && \
+    chmod 0440 /etc/sudoers.d/"$USER" && \
+    cp /etc/skel/.bashrc /home/${USER}
+
+
+# remove empty space
+# :g/^ /norm dw
+# sort
+# cat /tmp/t.txt |sort
+
+
 
 # FROKM HERE
 # https://linuxamination.blogspot.com/2021/05/docker-error-debconf-cant-locate.html
